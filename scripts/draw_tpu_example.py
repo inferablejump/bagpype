@@ -5,6 +5,7 @@ def draw_tpu_example():
     p = bp.Pipeline()
     p.renderer.config.x_axis_label_stride = 8
     p.renderer.config.x_axis_tick_stride = 8
+    p.renderer.config.edge_routing = "orthogonal"
 
     # Create operations
     WLSU = bp.Op("WLSU")
@@ -14,7 +15,6 @@ def draw_tpu_example():
     VPU  = bp.Op("VPU")
 
     WLSU.load_weight1(0, 32)
-    WLSU.load_weight2(33, 32)
     MLSU.load_activation(1, 32)
     MLSU.load_activation2(33+1, 32)
     MXU.add_node(bp.Node("matmul_redosum", 0+33+1, 32))

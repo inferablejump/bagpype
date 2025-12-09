@@ -122,8 +122,9 @@ class PipelineRenderer:
 
                 # orthogonal edges
                 if self.config.edge_routing == "orthogonal":
-                    verts = [(sx, sy), (tx, sy), (tx, ty)]
-                    codes = [Path.MOVETO, Path.LINETO, Path.LINETO]
+                    mid_x = (sx + tx) / 2
+                    verts = [(sx, sy), (mid_x, sy), (mid_x, ty), (tx, ty)]
+                    codes = [Path.MOVETO, Path.LINETO, Path.LINETO, Path.LINETO]
                     path = Path(verts, codes)
                     arrow = FancyArrowPatch(
                         path=path,
