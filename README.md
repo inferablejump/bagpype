@@ -52,6 +52,8 @@ i0.add_node(Node("execute", 2))    # for the faint of heart
 print(i0.fetch)  # fetch@0
 ```
 
+Multi-cycle operation are also supported, by specifying an optional "duration" argument. If note specified, they default to 1.
+
 ### Edges
 Edges show dependencies between pipeline stages using the `>>` operator:
 
