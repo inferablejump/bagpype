@@ -10,26 +10,26 @@ def draw_multicycle_example():
     add = bp.Op("add x3, x1, x4")
     store = bp.Op("str x3, [x5]")
 
-    # Load instruction: IF(1), DE(2), multi-cycle MEM(3-5), WB(6)
+    # Load instruction: IF(1), DE(2), multi-cycle MEM(4-5), WB(6)
     load.IF(1)
     load.DE(2)
     load.EX(3)
-    load.add_node(bp.Node("MEM", start_time=4, end_time=5, style=bp.NodeStyle(color="lightblue")))
+    load.add_node(bp.Node("MEM", start_time=4, duration=2, style=bp.NodeStyle(color="lightblue")))
     load.WB(6)
 
     # Add instruction: IF(2), DE(3), waits for load, EX(6), WB(7)
     add.IF(2)
     add.DE(3)
-    add.add_node(bp.Node("stall", start_time=4, end_time=5, style=bp.NodeStyle(color="orange", linestyle="--")))
+    add.add_node(bp.Node("stall", start_time=4, duration=2, style=bp.NodeStyle(color="orange", linestyle="--")))
     add.EX(6)
     add.WB(7)
 
     # Store instruction: IF(3), DE(4), waits, EX(7), MEM(8-9)
     store.IF(3)
     store.DE(4)
-    store.add_node(bp.Node("stall", start_time=5, end_time=6, style=bp.NodeStyle(color="orange", linestyle="--")))
+    store.add_node(bp.Node("stall", start_time=5, duration=2, style=bp.NodeStyle(color="orange", linestyle="--")))
     store.EX(7)
-    store.MEM(8, 9)
+    store.MEM(8, 2)
 
     p += load
     p += add

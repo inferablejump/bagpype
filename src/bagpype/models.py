@@ -15,10 +15,10 @@ class NodeStyle:
 
 
 class Node:
-    def __init__(self, label: str, start_time: int, end_time: int = None, style: NodeStyle = None):
+    def __init__(self, label: str, start_time: int, duration: int = 1, style: NodeStyle = None):
         self.label = label
         self.start_time = start_time
-        self.end_time = end_time if end_time is not None else start_time
+        self.duration = duration
         self.style = style if style is not None else NodeStyle()
         # parent op is set and maintained by the Op class
 
@@ -28,12 +28,12 @@ class Node:
         return self.start_time
 
     @property
-    def duration(self):
-        """Return the number of cycles this node spans."""
-        return self.end_time - self.start_time + 1
+    def end_time(self):
+        """Return the end time (last cycle) of this node."""
+        return self.start_time + self.duration - 1
 
     def __repr__(self):
-        if self.start_time == self.end_time:
+        if self.duration == 1:
             return f"{self.label}@{self.start_time}"
         return f"{self.label}@{self.start_time}-{self.end_time}"
 
@@ -53,7 +53,7 @@ class Node:
             return False
         return (self.label == other.label and
                 self.start_time == other.start_time and
-                self.end_time == other.end_time and
+                self.duration == other.duration and
                 self.parent_op == other.parent_op)
 
 

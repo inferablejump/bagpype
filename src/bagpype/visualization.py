@@ -24,6 +24,7 @@ class RenderConfig:
     font_family: str = "DejaVu Sans"
     y_label_font_size: int = 12
     x_label_font_size: int = 16
+    x_axis_label_stride: int = 1
 
 
 class PipelineRenderer:
@@ -103,7 +104,7 @@ class PipelineRenderer:
         ax.set_xticklabels([])
 
         # add x-labels in the middle of the x-ticks
-        for i in range(min_time, max_time + 1):
+        for i in range(min_time, max_time + 1, self.config.x_axis_label_stride):
             ax.text(i, 0.4, f"{i}", ha="center", va="center")
 
         # draw edges
