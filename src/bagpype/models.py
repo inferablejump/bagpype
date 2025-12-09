@@ -15,14 +15,27 @@ class NodeStyle:
 
 
 class Node:
-    def __init__(self, label: str, time: int, style: NodeStyle = NodeStyle()):
+    def __init__(self, label: str, start_time: int, end_time: int = None, style: NodeStyle = NodeStyle()):
         self.label = label
-        self.time = time
+        self.start_time = start_time
+        self.end_time = end_time if end_time is not None else start_time
         self.style = style
         # parent op is set and maintained by the Op class
 
+    @property
+    def time(self):
+        """Backwards compatibility: return start_time as 'time'."""
+        return self.start_time
+
+    @property
+    def duration(self):
+        """Return the number of cycles this node spans."""
+        return self.end_time - self.start_time + 1
+
     def __repr__(self):
-        return f"{self.label}@{self.time}"
+        if self.start_time == self.end_time:
+            return f"{self.label}@{self.start_time}"
+        return f"{self.label}@{self.start_time}-{self.end_time}"
 
     def __rshift__(self, other):
         """Support for '>>' syntax: node1 >> node2 creates a chain"""
@@ -39,7 +52,8 @@ class Node:
         if not isinstance(other, Node):
             return False
         return (self.label == other.label and
-                self.time == other.time and
+                self.start_time == other.start_time and
+                self.end_time == other.end_time and
                 self.parent_op == other.parent_op)
 
 

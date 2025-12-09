@@ -7,7 +7,7 @@ This module contains the matplotlib-based renderer and export functionality.
 from dataclasses import dataclass
 from typing import Tuple, Optional, List
 import matplotlib.pyplot as plt
-from matplotlib.patches import FancyArrowPatch
+from matplotlib.patches import FancyArrowPatch, FancyBboxPatch
 from matplotlib.path import Path
 import seaborn as sns
 
@@ -55,14 +55,32 @@ class PipelineRenderer:
         total_ops = len(self.parent_pipeline.ops)
 
         # plot the nodes
+        node_height = 0.6  # height of node boxes
         for i, op in enumerate(self.parent_pipeline.ops):
             for k, v in op.nodes.items():
-                x = v.time
                 y = total_ops - i
-                ax.scatter(x, y, marker="s", s=3000, color=v.style.color,
-                           edgecolors="black", alpha=0.6, linewidths=1.5, linestyle=v.style.linestyle)
-                ax.text(x, y, k, ha="center", va="center", fontweight="bold")
-                self.vis_nodes_x.append(x)
+                # Calculate node width based on duration
+                node_width = v.duration - 0.2   # 0.8 to leave some gap between adjacent nodes
+                # Center x position for the node
+                center_x = (v.start_time + v.end_time) / 2
+
+                # Draw rectangle for the node
+                rect = FancyBboxPatch(
+                    (center_x - node_width / 2, y - node_height / 2),
+                    node_width, node_height,
+                    boxstyle="round,pad=0.02,rounding_size=0.05",
+                    facecolor=v.style.color,
+                    edgecolor="black",
+                    alpha=0.6,
+                    linewidth=1.5,
+                    linestyle=v.style.linestyle
+                )
+                ax.add_patch(rect)
+                ax.text(center_x, y, k, ha="center", va="center", fontweight="bold")
+
+                # Track all timestamps for axis bounds
+                self.vis_nodes_x.append(v.start_time)
+                self.vis_nodes_x.append(v.end_time)
 
         # prepare y-ticks
         total_ops = len(self.parent_pipeline.ops)
@@ -95,9 +113,10 @@ class PipelineRenderer:
                 n1 = deps[i]
                 n2 = deps[i + 1]
 
-                sx = n1.time
+                # Edge starts from end of source node and goes to start of destination node
+                sx = n1.end_time
                 sy = self.get_y_from_node(n1)
-                tx = n2.time
+                tx = n2.start_time
                 ty = self.get_y_from_node(n2)
 
                 # orthogonal edges
