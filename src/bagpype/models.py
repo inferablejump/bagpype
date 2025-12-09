@@ -15,11 +15,11 @@ class NodeStyle:
 
 
 class Node:
-    def __init__(self, label: str, start_time: int, end_time: int = None, style: NodeStyle = NodeStyle()):
+    def __init__(self, label: str, start_time: int, end_time: int = None, style: NodeStyle = None):
         self.label = label
         self.start_time = start_time
         self.end_time = end_time if end_time is not None else start_time
-        self.style = style
+        self.style = style if style is not None else NodeStyle()
         # parent op is set and maintained by the Op class
 
     @property
