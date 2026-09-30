@@ -1,4 +1,4 @@
-# Bagpype: Better Academic Graphs for Processor Pipelines
+# Bagpype: Better Analytical Graphs for Processor Pipelines
 
 A Python library for describing and visualizing processor pipeline diagrams with a clean, intuitive syntax.
 
