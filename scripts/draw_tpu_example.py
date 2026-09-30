@@ -3,22 +3,24 @@ import bagpype as bp
 
 def draw_tpu_example():
     p = bp.Pipeline()
-    p.renderer.config.x_axis_label_stride = 8
-    p.renderer.config.x_axis_tick_stride = 8
+    p.renderer.config.x_axis_label_stride = 1
+    p.renderer.config.x_axis_tick_stride = 1
     p.renderer.config.edge_routing = "orthogonal"
 
     # Create operations
     WLSU = bp.Op("WLSU")
     MLSU = bp.Op("MLSU")
-    VLSU = bp.Op("VLSU")
-    MXU  = bp.Op("MXU")
-    VPU  = bp.Op("VPU")
+    # VLSU = bp.Op("VLSU")
+    MXU = bp.Op("MXU")
+    VPU = bp.Op("VPU")
 
-    WLSU.load_weight1(0, 32)
-    MLSU.load_activation(1, 32)
-    MLSU.load_activation2(33+1, 32)
-    MXU.add_node(bp.Node("matmul_redosum", 0+33+1, 32))
-    VPU.softmax(0+33+32+1, 32)
+    VLEN = 4
+
+    WLSU.load_weight1(0, VLEN)
+    MLSU.load_activation(1, VLEN)
+    MLSU.load_activation2(VLEN+1+1, VLEN)
+    MXU.add_node(bp.Node("matmul_redosum", 0+VLEN+1, VLEN))
+    VPU.softmax(0+VLEN+1+VLEN, VLEN)
 
     p += WLSU
     p += MLSU

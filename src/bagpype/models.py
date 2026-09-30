@@ -81,6 +81,14 @@ class Op:
         node.parent_op = self
         return self
 
+    def append_node(self, label, duration: 1):
+        # iterate over all nodes to find the ending time
+        end_time = [lambda n: n.end_time for n in self.nodes].max
+        node = Node(label, end_time + 1, duration)
+        self.nodes[label] = node
+        node.parent_op = self
+        return self
+
 
 class NodeList:
     # a linked list of nodes
